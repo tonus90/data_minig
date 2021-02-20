@@ -39,7 +39,7 @@ class GetCat:
         for i in self._cat_dict_gen():  #вытащим словарь
             params = {
                 'store': None,
-                'records_per_page':12,
+                'records_per_page': 12,
                 'page': 1,
                 'categories': int(i['code']), #добавим код категории в параметры
                 'ordering': None,
@@ -50,7 +50,7 @@ class GetCat:
             return params #вернем параметры
 
     def _get_prods(self): #получить список продуктов для категории
-        response = requests.get(self.url_p, params=self._get_params(), headers = self.headers) #вытащим с сайта первые продукты (page=1) по данной категории акции
+        response = requests.get(self.url_p, params=self._get_params(), headers=self.headers) #вытащим с сайта первые продукты (page=1) по данной категории акции
         result_list = [] #итоговый лист продуктов
         url = self.url_p #юрл для цикла ниже
         while url: #пока в юрл что-то есть делаем:
@@ -66,7 +66,7 @@ class GetCat:
     def _get_res_dict_for_cat(self): #получить результирующий для задания словарь типа: {'code':123, 'name':'asd', 'PRODUCTS':[...]}
         for i in range(len(self.data_c)): #проходимся по всему кол-ву категорий
             for j in self._cat_dict_gen(): #достаем словарик для категории типа {'code':123, 'name':'asd'}
-                my_dict = {key:value for key, value in j.items()} #создадим уже итоговый словарь
+                my_dict = {key: value for key, value in j.items()} #создадим уже итоговый словарь
             my_dict['PRODUCTS'] = self._get_prods() #к которому присоединим ключ PRODUCTS со значением наших продуктов
             self.i += 1 #окей, первую категорию в списке категорий готово, увеличиваем счетчик на 1, чтобы перейти ко второй категории
             yield my_dict #выкидываем словарь для первой категории
@@ -91,7 +91,10 @@ if __name__ == "__main__":
             save_path.mkdir()
         return save_path #функция для создания директории
 
-    response_c = requests.get(url_c, headers = 'Hello_world!!!!') #сделаем запрос на юрл
+
+
+
+    response_c = requests.get(url_c, headers = {'User-Agent': 'Hello WORLD!))'}) #сделаем запрос на юрл
 
     save_path_categories = get_save_path("categories") #сделать директорию с именем категории
     res = GetCat(url_p, response_c, save_path_categories) #сделать объект, в него прокинем стартовый юрл, готовый респонз категорий и путь директории categories
