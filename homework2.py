@@ -68,7 +68,7 @@ class MagnitParse:
         }
 
     def _get_datetime(self, list_with_date):
-        year = 2021
+        year = datetime.date.today().year
         months = {
             'янв': 1,
             'фев': 2,
@@ -96,6 +96,7 @@ class MagnitParse:
         date_undo = datetime.datetime(year, months[list_with_date[3][:3:]], int(list_with_date[2]))
         return [date_since, date_undo]
 
+        #Это первые попытки получить дату тайм
         # my_list = curr_date.split("\n")
         # date_from = my_list[1][2::].split(' ')
         # date_from[1] = months[date_from[1].replace(date_from[1], date_from[1][:3:])]
