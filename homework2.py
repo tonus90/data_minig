@@ -60,15 +60,15 @@ class MagnitParse:
             'url': lambda a: urljoin(self.start_url, a.attrs.get('href', '')),
             'promo_name': lambda a: a.find('div', attrs={'class': 'card-sale__name'}).text,
             'product_name': lambda a: a.find('div', attrs={'class': 'card-sale__title'}).text,
-            'old_price': lambda a: float('.'.join(a.find('div', attrs={'class': 'label__price label__price_old'}).text.split())),
-            'new_price': lambda a: float('.'.join(a.find('div', attrs={'class': 'label__price label__price_new'}).text.split())),
-            'image_url': lambda a: urljoin('https://magnit.ru', a.find('img').attrs.get('data-src', '')),
-            'date_from': lambda a: self._get_datetime(a.find('div', attrs={'class': 'card-sale__date'}).text.split())[0],
-            'date_to': lambda a: self._get_datetime(a.find('div', attrs={'class': 'card-sale__date'}).text.split())[1],
+            'old_price': lambda a: float('.'.join(a.find('div', attrs={'class': 'label__price label__price_old'}).text.split())), #в теге a нашли тег div с атрибутами старой/новой цены, преобразовали в str, сплитанули, получили список ['33', '99'],
+            'new_price': lambda a: float('.'.join(a.find('div', attrs={'class': 'label__price label__price_new'}).text.split())), #потом join через точку и флоат эту строку
+            'image_url': lambda a: urljoin('https://magnit.ru', a.find('img').attrs.get('data-src', '')), #тут просто в теге а нашли тег img и вытащили ссылку
+            'date_from': lambda a: self._get_datetime(a.find('div', attrs={'class': 'card-sale__date'}).text.split())[0], #сначала получим список пример: ['c', '22', 'февраля', 'до', '8', 'марта'], засунем в ф-ю гет дейт и получим дату С
+            'date_to': lambda a: self._get_datetime(a.find('div', attrs={'class': 'card-sale__date'}).text.split())[1], #тут получим дату ДО
         }
 
     def _get_datetime(self, list_with_date):
-        year = datetime.date.today().year
+        year = datetime.date.today().year #получим год
         months = {
             'янв': 1,
             'фев': 2,
@@ -89,12 +89,12 @@ class MagnitParse:
             '1': 'до',
         }
 
-        for i in range(len(my_dict)):
-            list_with_date.remove(my_dict[str(i)])
+        for i in range(len(my_dict)): #удалим из полученного списка ['c', '22', 'февраля', 'до', '8', 'марта'] элементы 'c' и 'до'
+            list_with_date.remove(my_dict[str(i)]) #получится нужный список ['22', 'февраля', '8', 'марта']
 
-        date_since = datetime.datetime(year, months[list_with_date[1][:3:]], int(list_with_date[0]))
-        date_undo = datetime.datetime(year, months[list_with_date[3][:3:]], int(list_with_date[2]))
-        return [date_since, date_undo]
+        date_since = datetime.datetime(year, months[list_with_date[1][:3:]], int(list_with_date[0])) #сделаем дату С: год, месяц это число по ключу, а ключ - срез 1го элемента списка (фев), чило месяца это 0й интанутый эл. списка
+        date_undo = datetime.datetime(year, months[list_with_date[3][:3:]], int(list_with_date[2])) #сделаем дату ДО: год, месяц это число по ключу, а ключ - срез 3го элемента списка (фев), чило месяца это 2й интанутый эл. списка
+        return [date_since, date_undo] #дату с и до в список и вернем в вызывающую функцию
 
         #Это первые попытки получить дату тайм
         # my_list = curr_date.split("\n")
